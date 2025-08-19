@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Salma's Mood Jar</title>
+  <style>
+    :root{
+      --pink:#ffb6c9; --pink-deep:#cc5c86; --green:#9ad1b3; --ink:#2b2b2b;
+      --card:#ffffff; --muted:#5b6470;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial;
+      color:var(--ink);
+      background: radial-gradient(1200px 800px at 80% -10%, rgba(154,209,179,.35), transparent 60%),
+                  radial-gradient(1000px 700px at -10% 110%, rgba(255,182,201,.45), transparent 50%),
+                  linear-gradient(135deg, #ffd6e3, #d7f2e4);
+      min-height:100vh; display:grid; place-items:center; padding:24px;
+    }
+    .wrap{width:min(860px,100%); background:var(--card); border-radius:22px; box-shadow:0 12px 32px rgba(0,0,0,.08); overflow:hidden}
+    header, section, footer{padding:24px 22px}
+    .hero{ text-align:center; padding:48px 24px 40px; background:linear-gradient(180deg, rgba(255,182,201,.35), rgba(154,209,179,.22)); }
+    h1{ margin:0 0 10px 0; font-size:clamp(26px,4.2vw,40px); color:#b03a6e; letter-spacing:.2px; }
+    .sub{ margin:0 auto; color:var(--muted); max-width:640px; line-height:1.6; font-size:clamp(15px,2.2vw,18px); }
+    .cta{
+      margin-top:22px; appearance:none; border:0; cursor:pointer; background:#58c190; color:#fff; font-weight:800;
+      padding:12px 18px; border-radius:14px; box-shadow:0 10px 18px rgba(88,193,144,.35);
+      transition:transform .08s ease, filter .2s ease;
+    }
+    .cta:hover{filter:brightness(1.06)} .cta:active{transform:translateY(1px)}
+    .panel{display:none} .panel.active{display:block}
+    .moods{ display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:8px }
+    .chip{
+      appearance:none; border:0; cursor:pointer; background:#ffe6ef; color:#7a3052; font-weight:800;
+      padding:10px 14px; border-radius:999px; box-shadow:0 2px 0 rgba(0,0,0,.06); transition:transform .06s ease;
+    }
+    .chip:hover{transform:translateY(-1px)}
+    .card{ margin-top:16px; background:#fff; border:1px solid rgba(0,0,0,.06); border-radius:18px; padding:20px; box-shadow:0 8px 18px rgba(0,0,0,.06) }
+    .badge{ display:inline-block; font-size:12px; font-weight:900; letter-spacing:.3px; color:#a14a6f; background:#ffe6f1; border:1px solid #ffd0e4; padding:4px 10px; border-radius:999px }
+    blockquote{ margin:14px 0 0 0; font-size:clamp(19px,3.2vw,26px); line-height:1.5; font-family:Georgia,"Times New Roman",serif }
+    .tools{ margin-top:14px; display:flex; gap:10px; justify-content:flex-end }
+    .btn{
+      appearance:none; border:0; cursor:pointer; background:#ff86ac; color:#fff; font-weight:800;
+      padding:10px 14px; border-radius:12px; box-shadow:0 8px 16px rgba(255,134,172,.28);
+      transition:transform .06s ease, filter .2s ease;
+    }
+    .btn:hover{filter:brightness(1.05)} .btn:active{transform:translateY(1px)}
+    footer{ color:var(--muted); font-size:12px; text-align:center }
+    .fade{ opacity:0; transform:translateY(6px); transition:opacity .28s ease, transform .28s ease }
+    .fade.show{ opacity:1; transform:translateY(0) }
+    .nav{ display:flex; gap:8px; justify-content:center; padding:10px 0 0 0 }
+    .nav button{ background:#fff0f6; color:#7a3052; border:1px solid #ffd0e4; padding:6px 10px; border-radius:999px; font-weight:700; cursor:pointer }
+  </style>
+</head>
+<body>
+  <main class="wrap" role="main">
+    <!-- HOMEPAGE -->
+    <div id="home" class="panel active">
+      <div class="hero">
+        <h1>Salma’s Mood Jar</h1>
+        <p class="sub">Hi my Salma, this is your little corner of calm. Whenever work feels heavy, whenever your heart feels tired, you can come here and find me waiting with words just for you. No matter your mood, I’ll always be here to hold it with you.</p>
+        <button class="cta" onclick="go('jar')">Pick how you feel</button>
+      </div>
+      <footer>Made with love, always on your side 💗</footer>
+    </div>
+
+    <!-- MOOD JAR -->
+    <div id="jar" class="panel">
+      <header>
+        <div class="nav">
+          <button onclick="go('home')">← Home</button>
+        </div>
+        <h1 style="text-align:center; margin-top:6px;">Pick your mood, my Salma</h1>
+        <div class="moods" role="group" aria-label="Mood choices">
+          <button class="chip" onclick="show('happy')">🌸 Happy</button>
+          <button class="chip" onclick="show('sad')">☁️ Sad</button>
+          <button class="chip" onclick="show('unhappy')">🌥️ Unhappy</button>
+          <button class="chip" onclick="show('frustrated')">😤 Frustrated</button>
+          <button class="chip" onclick="show('exhausted')">😴 Exhausted</button>
+          <button class="chip" onclick="show('loved')">💖 Loved</button>
+        </div>
+      </header>
+
+      <section class="card">
+        <span id="badge" class="badge">WELCOME</span>
+        <blockquote id="quote" class="fade">Pick a mood to begin, my love.</blockquote>
+        <div class="tools">
+          <button class="btn" onclick="another()">Another one</button>
+          <button class="btn" onclick="copyNote()">Copy note</button>
+        </div>
+      </section>
+
+      <footer>You are never alone, Meine Sonne 💚</footer>
+    </div>
+  </main>
+
+  <script>
+    function go(id){
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+    const quoteEl = document.getElementById('quote');
+    const badgeEl = document.getElementById('badge');
+    let currentMood = null;
+
+    const quotes = {
+      happy: [
+        "My Salma, your smile lights up my morning, and I carry it all day.",
+        "Oh love, the way you laugh makes ordinary hours feel like a holiday.",
+        "Meine Sonne, when you’re happy, the room turns into soft sunshine.",
+        "My world, your joy is the gentlest kind of music to me.",
+        "My love, I hope today keeps handing you little reasons to grin.",
+        "My Salma, your happiness reminds me that kindness wins, every time.",
+        "Oh love, you glow in the quietest, sweetest ways and I adore it.",
+        "Meine Sonne, the light in your eyes teaches me how to hope.",
+        "My world, seeing you content feels like spring after rain, every time.",
+        "My love, your cheer spreads like petals on warm wind, softly.",
+        "My Salma, keep the giggles, keep the sparkle, keep the softness.",
+        "Oh love, even a small smile from you feels like sunrise to me.",
+        "Meine Sonne, you make simple things feel like treasure hunts, always.",
+        "My world, I love the way your joy invites others to breathe easier.",
+        "My love, may your steps feel light, and your coffee taste perfect.",
+        "My Salma, you turn plans into adventures without even trying.",
+        "Oh love, happiness looks effortless on you, and so wonderfully real.",
+        "Meine Sonne, your bright mood paints quiet corners with warmth.",
+        "My world, I’m proud of how you choose joy with gentle courage.",
+        "My love, I want to protect that smile like it’s glass and stars.",
+        "My Salma, I adore how you find sweetness in the small moments.",
+        "Oh love, your giggle is my favorite spell against grey days.",
+        "Meine Sonne, stay playful, stay curious, stay beautifully you.",
+        "My world, when you’re happy, I feel exactly where I belong.",
+        "My love, I hope you keep a pocket of joy just for yourself.",
+        "My Salma, your bright spirit makes patience easy and love simpler.",
+        "Oh love, may this hour be kind, and the next even kinder.",
+        "Meine Sonne, I see your glow, and I’m endlessly grateful for it.",
+        "My world, celebrate the tiny wins, I am clapping for you quietly.",
+        "My love, your laughter fits my heart like a perfect song.",
+        "My Salma, even a shy smile from you can heal a day for me.",
+        "Oh love, your joy reminds me to slow down and taste life.",
+        "Meine Sonne, may your mind feel clear and your heart feel safe.",
+        "My world, happiness sits softly on your shoulders, and I love it there.",
+        "My love, you carry brightness with such grace and humility.",
+        "My Salma, keep choosing what feels true, I’m cheering for you.",
+        "Oh love, let your delight take up space, you deserve the room.",
+        "Meine Sonne, I’m thankful for every light moment you share.",
+        "My world, you make peace look possible, even on busy days.",
+        "My love, I hope the air around you stays warm and friendly.",
+        "My Salma, you shine without noise, and it is beautiful.",
+        "Oh love, your happy heart is my favorite view every day.",
+        "Meine Sonne, you are the gentle glow after a long road.",
+        "My world, I love the way joy finds you and stays close.",
+        "My love, may you stumble on soft surprises all day long.",
+        "My Salma, your cheer is a lantern I never take for granted.",
+        "Oh love, thank you for letting me witness your light today.",
+        "Meine Sonne, may kindness return to you in generous waves.",
+        "My world, your smile is quiet proof that love works.",
+        "My love, stay bright, stay tender, stay wonderfully you."
+      ],
+      sad: [
+        "My Salma, when the day feels heavy, lean your heart on mine.",
+        "Oh love, if words are hard, your silence is safe with me.",
+        "Meine Sonne, clouds can cover you, they cannot steal your light.",
+        "My world, take your time to feel, I will not rush your healing.",
+        "My love, let me keep you company, even if we only breathe.",
+        "My Salma, I’m listening for every quiet ache behind your eyes.",
+        "Oh love, you are not a burden, your feelings are welcome here.",
+        "Meine Sonne, rest your thoughts for a while, I will hold the rest.",
+        "My world, it’s okay to pause, we move again when you’re ready.",
+        "My love, you are loved as you are, especially on tough days.",
+        "My Salma, we can make tea, sit softly, and speak only if you want.",
+        "Oh love, your tenderness is not weakness, it is your brave heart.",
+        "Meine Sonne, I am beside you, even when the room feels far.",
+        "My world, I will guard your hope until you feel it again.",
+        "My love, if you need quiet, I will be the quiet with you.",
+        "My Salma, sadness is real, and you are allowed to feel it fully.",
+        "Oh love, I wish I could lift the weight, I am trying.",
+        "Meine Sonne, even a small breath counts, take one with me now.",
+        "My world, your softness is safe here, nothing to prove today.",
+        "My love, you do not have to fix it all in this minute.",
+        "My Salma, let the minutes be gentle, let the noise be distant.",
+        "Oh love, I will be your shelter while the weather passes.",
+        "Meine Sonne, I know this is hard, I am holding you in thought.",
+        "My world, your worth is untouched by how you feel right now.",
+        "My love, we can take one tiny step, and then rest together.",
+        "My Salma, I am proud of you for being honest with your heart.",
+        "Oh love, even small moments of ease are wins, let’s count them.",
+        "Meine Sonne, please remember, you are loved without conditions.",
+        "My world, your quiet is safe with me, always and completely.",
+        "My love, I will not let the dark convince you you’re alone.",
+        "My Salma, wrap yourself in softness, I’ll keep the edges away.",
+        "Oh love, your gentle heart deserves patience, I have plenty.",
+        "Meine Sonne, when you feel empty, I will sit with you.",
+        "My world, you do not need to be strong for me, be real.",
+        "My love, I believe in your healing, even when you cannot.",
+        "My Salma, we can slow everything down until breath feels easy.",
+        "Oh love, I am here to steady you, hand in hand.",
+        "Meine Sonne, you are allowed to start again, as many times as needed.",
+        "My world, nothing you feel is too much for me to hold.",
+        "My love, the light will return, I will guide you toward it.",
+        "My Salma, you are still you, tender, good, deeply loved.",
+        "Oh love, let me remind you why you matter to me.",
+        "Meine Sonne, close your eyes for a moment, I am here.",
+        "My world, your heart is learning, I am patient with its pace.",
+        "My love, I will keep a candle lit until you are ready.",
+        "My Salma, you can rest, you can be soft, you can be held.",
+        "Oh love, you are not alone in this, not for a breath.",
+        "Meine Sonne, morning will come, we will greet it together.",
+        "My world, thank you for trusting me with your tender hours.",
+        "My love, I choose you on bright days, and I choose you now."
+      ],
+      unhappy: [
+        "My Salma, when nothing feels right, I am here, holding steady.",
+        "Oh love, you do not need to pretend with me, be real.",
+        "Meine Sonne, the day can be off, you are still fully loved.",
+        "My world, we can make room for the meh, gently and slowly.",
+        "My love, you are not your mood, you are so much more.",
+        "My Salma, if it all feels flat, I will bring color back with you.",
+        "Oh love, we can lower the bar today, and still be proud.",
+        "Meine Sonne, choose softness, choose simple, choose your peace.",
+        "My world, unhappy moments pass, your goodness remains bright.",
+        "My love, let’s break the day into tiny kind steps.",
+        "My Salma, I will be your calm rhythm while the noise settles.",
+        "Oh love, food, water, breath, and patience, enough for today.",
+        "Meine Sonne, cancel the non-essentials, your peace matters more.",
+        "My world, we can try again later, perfection is not required.",
+        "My love, your value never changes because your mood did.",
+        "My Salma, I’m here for the boring, the messy, the real parts.",
+        "Oh love, rest your shoulders, unclench your jaw, I am here.",
+        "Meine Sonne, kindness to yourself is the bravest act today.",
+        "My world, find one doable thing, then we pause together.",
+        "My love, you are allowed to feel off, and be loved fully.",
+        "My Salma, you will not feel like this forever, I will stay.",
+        "Oh love, a short walk and water can help, let’s try.",
+        "Meine Sonne, even a five minute reset counts, try it with me.",
+        "My world, hand me the rough edges, I will hold them softly.",
+        "My love, I admire your honesty with yourself, it is strength.",
+        "My Salma, we can tidy one corner, light one candle, breathe.",
+        "Oh love, imperfect days still hold tiny good, we will find it.",
+        "Meine Sonne, I will keep the pace slow until you feel steady.",
+        "My world, the only goal today is gentleness with yourself.",
+        "My love, you deserve comfort, even when you feel low.",
+        "My Salma, choose the soft option, I will support it.",
+        "Oh love, protect your energy, we can say no kindly.",
+        "Meine Sonne, you do not have to entertain anyone today.",
+        "My world, simple can be beautiful, let us choose simple.",
+        "My love, I am proud you showed up, even quietly.",
+        "My Salma, I have patience for both of us, take what you need.",
+        "Oh love, your heart knows what helps, I will follow.",
+        "Meine Sonne, anchor to a small routine, gently and kindly.",
+        "My world, I will hold hope while you hold breath.",
+        "My love, I care more about your ease than any checklist.",
+        "My Salma, you are safe with me, exactly as you are.",
+        "Oh love, if joy feels far, we will walk toward it slowly.",
+        "Meine Sonne, soft clothes, quiet lights, calm music, we choose ease.",
+        "My world, I love you in calm and restless, equally and always.",
+        "My love, I will stay until the edge softens, I promise.",
+        "My Salma, thank you for trusting me on the off days.",
+        "Oh love, we will try again tomorrow, I will be here.",
+        "Meine Sonne, your spirit is gentle and strong, even now.",
+        "My world, I am here to make hard days less lonely.",
+        "My love, you belong here, even when hours feel crooked."
+      ],
+      frustrated: [
+        "My Salma, breathe with me, ten slow counts, shoulders soft.",
+        "Oh love, you do not need to fix everything today, one thing.",
+        "Meine Sonne, step back for a moment, return with calmer eyes.",
+        "My world, I am on your team, even when plans change.",
+        "My love, the noise can wait, your peace matters more.",
+        "My Salma, sip water, then we tackle one tiny piece.",
+        "Oh love, your effort is seen, even if results hide.",
+        "Meine Sonne, frustration means you care, and caring is beautiful.",
+        "My world, we will sort the knots, one thread at a time.",
+        "My love, I am proud of your patience, even when thin.",
+        "My Salma, write the next step, not the whole story.",
+        "Oh love, pause the spiral, come back when the air is kind.",
+        "Meine Sonne, set the smallest goal, celebrate it warmly.",
+        "My world, I trust your judgment, even when paths look foggy.",
+        "My love, remember your wins, they are still with you.",
+        "My Salma, this hard moment will pass, I am here.",
+        "Oh love, the mistake is not you, it is just a moment.",
+        "Meine Sonne, move a little, shake out the static gently.",
+        "My world, I will help you draw a boundary, you matter.",
+        "My love, kindness to yourself is the smartest strategy now.",
+        "My Salma, take air, take space, choose the gentlest option.",
+        "Oh love, we can ask for help, together is allowed.",
+        "Meine Sonne, your calm returns, it always finds you again.",
+        "My world, you are capable, even if the task feels loud.",
+        "My love, I am with you for the tedious parts, hand in hand.",
+        "My Salma, reset the playlist, begin again from minute one.",
+        "Oh love, progress can be tiny, it still counts fully.",
+        "Meine Sonne, let this go for now, return with fresh eyes.",
+        "My world, I admire your grit, I admire your heart more.",
+        "My love, you can say no kindly, the world keeps spinning.",
+        "My Salma, step outside for a breath, the sky helps.",
+        "Oh love, your worth is not tied to a task, never.",
+        "Meine Sonne, we choose clarity over speed, that is wise.",
+        "My world, I believe you will figure it out, slowly.",
+        "My love, you do not need to rush, you already care.",
+        "My Salma, loosen the grip, answers come when you soften.",
+        "Oh love, perfection is not the goal, peace is, always.",
+        "Meine Sonne, I am proud you try, even when it’s hard.",
+        "My world, make a short list, cross one thing gently.",
+        "My love, I will be your calm echo, you are enough.",
+        "My Salma, take the kindest next step, nothing more.",
+        "Oh love, let the pressure wait outside, you are safe.",
+        "Meine Sonne, your patience grows with practice, I see it.",
+        "My world, I will sit with you until the storm shrinks.",
+        "My love, your peace matters more than any deadline.",
+        "My Salma, I trust your pace, I trust your heart.",
+        "Oh love, let us laugh a little at the mess, it helps.",
+        "Meine Sonne, thank you for trying, that is a quiet triumph.",
+        "My world, I have you, we will get through this hour."
+      ],
+      exhausted: [
+        "My Salma, close your eyes for a minute, I am watching over you.",
+        "Oh love, you can rest now, the world will wait for your pace.",
+        "Meine Sonne, your body is asking for kindness, listen gently.",
+        "My world, lay the burden down, I will guard your quiet.",
+        "My love, even heroes need naps, you have done enough.",
+        "My Salma, breathe slow, loosen your shoulders, soften your jaw.",
+        "Oh love, water, a stretch, a pause, I am here.",
+        "Meine Sonne, it is okay to stop, you owe nothing to the rush.",
+        "My world, you are allowed to be tired, and still be worthy.",
+        "My love, rest is productive for the soul, please take some.",
+        "My Salma, dim the lights, let calm settle around you.",
+        "Oh love, I will handle the noise, you choose silence.",
+        "Meine Sonne, you do not need to be strong right now.",
+        "My world, I will be your blanket of peace tonight.",
+        "My love, let the checklist go, choose soft minutes instead.",
+        "My Salma, one deep breath, in and out, I am here.",
+        "Oh love, the kindest thing is to pause, please pause.",
+        "Meine Sonne, you are safe to rest, completely and fully.",
+        "My world, I am proud of you, even when you do nothing.",
+        "My love, sleep if you can, I will keep the lamp on.",
+        "My Salma, you have carried a lot, let me carry you now.",
+        "Oh love, your worth does not live in your output.",
+        "Meine Sonne, wrap yourself in quiet, I will keep watch.",
+        "My world, you can come back to it later, not now.",
+        "My love, be gentle with your heartbeat, slow and soft.",
+        "My Salma, you may exhale, you are safe with me.",
+        "Oh love, tuck yourself into comfort, I will hold the rest.",
+        "Meine Sonne, small sips, small steps, small kindnesses today.",
+        "My world, your tired eyes deserve darkness and calm.",
+        "My love, the night will mend you, I am right here.",
+        "My Salma, let your thoughts float by, no need to chase them.",
+        "Oh love, I am proud you listened to your limits.",
+        "Meine Sonne, choose the pillow, the blanket, the quiet room.",
+        "My world, you have nothing to prove, especially tonight.",
+        "My love, I will keep the world gentle while you rest.",
+        "My Salma, soften the day’s edge, let it blur away.",
+        "Oh love, you can be small and safe, I’ve got you.",
+        "Meine Sonne, tomorrow can start later, sleep a little longer.",
+        "My world, I will be here when you wake, count on me.",
+        "My love, you deserve rest without guilt, fully and freely.",
+        "My Salma, I am holding your hand, even in your dreams.",
+        "Oh love, drift if you need, I will anchor you softly.",
+        "Meine Sonne, let quiet music cradle your thoughts tonight.",
+        "My world, loosen your schedule, your heart needs space.",
+        "My love, I am proud of every step that led you here.",
+        "My Salma, curl into comfort, let your breath find rhythm.",
+        "Oh love, sleep sweetly, I will greet the morning with you.",
+        "Meine Sonne, you are safe, you are loved, close your eyes.",
+        "My world, when you wake, we will start gently together.",
+        "My love, until then, rest deeply, my arms are home."
+      ],
+      loved: [
+        "My Salma, you are my favorite hello, and my safest home.",
+        "Oh love, every version of you is cherished by my heart.",
+        "Meine Sonne, you light the corners of my life so softly.",
+        "My world, I choose you in every timeline I can imagine.",
+        "My love, you are the poem my days keep trying to write.",
+        "My Salma, I carry your name in every quiet prayer.",
+        "Oh love, your laugh is my compass, it points me home.",
+        "Meine Sonne, I see you, I adore you, completely.",
+        "My world, your hand fits mine like it always belonged.",
+        "My love, being with you makes ordinary time feel golden.",
+        "My Salma, I want to be the calm you reach for first.",
+        "Oh love, thank you for trusting me with your tender heart.",
+        "Meine Sonne, I am proud of you, today and every day.",
+        "My world, I will love you loudly, and care for you gently.",
+        "My love, you are the reason patience feels natural to me.",
+        "My Salma, I like you in every mood, not just the sunny ones.",
+        "Oh love, your kindness is my favorite thing to witness.",
+        "Meine Sonne, I would cross any winter to keep you warm.",
+        "My world, you are my yes, in big ways and small.",
+        "My love, I am here, in this life and the next.",
+        "My Salma, I like your mind, your heart, your quiet humor.",
+        "Oh love, being yours is the easiest promise I keep.",
+        "Meine Sonne, your softness has taught me to be softer.",
+        "My world, I will always make room for your feelings.",
+        "My love, I want to make your ordinary days feel tender.",
+        "My Salma, I admire the courage inside your gentle ways.",
+        "Oh love, you are the safe place I dreamed about.",
+        "Meine Sonne, thank you for letting me love you fully.",
+        "My world, I choose you in the calm, and in the storm.",
+        "My love, I will keep showing up, again and again.",
+        "My Salma, your joy is my joy, and I mean that.",
+        "Oh love, I love the way you care for the world.",
+        "Meine Sonne, I am yours, in patience and devotion.",
+        "My world, I want to grow old laughing with you.",
+        "My love, you are my once in a lifetime grace.",
+        "My Salma, I love you on busy days and quiet nights.",
+        "Oh love, I am thankful for you, every single morning.",
+        "Meine Sonne, loving you makes me kinder to myself.",
+        "My world, I will learn you, again and again.",
+        "My love, your peace will always be my priority.",
+        "My Salma, I am here to hold your brightest and softest parts.",
+        "Oh love, you are my favorite place to be.",
+        "Meine Sonne, I will protect your heart like a garden.",
+        "My world, I love you, today, tomorrow, always.",
+        "My love, you are everything tender and true to me.",
+        "My Salma, I will keep loving you in ways you can feel.",
+        "Oh love, you are my home, my comfort, my wonder.",
+        "Meine Sonne, I will spend my life choosing you.",
+        "My world, thank you for letting me love you this much.",
+        "My love, you and I, always, hand in hand."
+      ]
+    };
+
+    const queues = {};
+    for (const mood of Object.keys(quotes)) queues[mood] = shuffle(quotes[mood]);
+
+    function shuffle(arr){
+      const a = arr.slice();
+      for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+      return a;
+    }
+    function pretty(mood){
+      if(mood==='happy') return 'HAPPY 🌸';
+      if(mood==='sad') return 'SAD ☁️';
+      if(mood==='unhappy') return 'UNHAPPY 🌥️';
+      if(mood==='frustrated') return 'FRUSTRATED 😤';
+      if(mood==='exhausted') return 'EXHAUSTED 😴';
+      if(mood==='loved') return 'LOVED 💖';
+      return mood.toUpperCase();
+    }
+    function nextQuote(mood){
+      if(!queues[mood] || queues[mood].length===0) queues[mood]=shuffle(quotes[mood]);
+      return queues[mood].pop();
+    }
+    function show(mood){
+      currentMood = mood;
+      badgeEl.textContent = pretty(mood);
+      const text = nextQuote(mood);
+      quoteEl.classList.remove('show');
+      setTimeout(()=>{ quoteEl.textContent = text; quoteEl.classList.add('show'); }, 20);
+    }
+    function another(){ if(currentMood) show(currentMood); }
+    async function copyNote(){
+      const t = quoteEl.textContent.trim(); if(!t) return;
+      try{ await navigator.clipboard.writeText(t); toast("Copied"); }
+      catch(e){
+        const ta = document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta); toast("Copied");
+      }
+    }
+    function toast(msg){
+      const b=document.createElement('div'); b.textContent=msg;
+      b.style.position='fixed'; b.style.left='50%'; b.style.bottom='24px'; b.style.transform='translateX(-50%)';
+      b.style.background='#111827'; b.style.color='#fff'; b.style.padding='8px 12px'; b.style.borderRadius='10px';
+      b.style.fontWeight='800'; b.style.boxShadow='0 8px 16px rgba(0,0,0,.25)'; b.style.zIndex='9999';
+      document.body.appendChild(b); setTimeout(()=>b.remove(),1000);
+    }
+  </script>
+</body>
+</html>
+
